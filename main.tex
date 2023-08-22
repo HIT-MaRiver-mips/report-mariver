@@ -1,0 +1,65 @@
+% !TEX program = xelatex
+% !TEX encoding = UTF-8 Unicode
+% !Mode:: "TeX:UTF-8"
+
+\documentclass[openany]{ctexbook}
+\usepackage{ctex}  
+\usepackage{tikz}
+\usepackage{geometry}
+\usepackage{pdfpages} %将PDF文件加入到封面位置
+\geometry{a4paper,left=1.5cm,right=1.5cm,top=3cm,bottom=3cm}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{tikz}
+\usepackage[title]{appendix}
+\usetikzlibrary{arrows.meta,
+	positioning,
+	quotes}
+\usepackage[figuresright]{rotating}
+
+% Define color
+\definecolor{vivadodraw}{rgb}{0.2549,0.3804,0.6235}
+\definecolor{vivadofill}{rgb}{0.9294,0.9647,0.9960}
+
+\lstset{
+ columns=fixed,       
+ numbers=left,                                        % 在左侧显示行号
+ numberstyle=\tiny\color{gray},                       % 设定行号格式
+ frame=none,                                          % 不显示背景边框
+ backgroundcolor=\color[RGB]{245,245,244},            % 设定背景颜色
+ keywordstyle=\color[RGB]{40,40,255},                 % 设定关键字颜色
+ numberstyle=\footnotesize\color{darkgray},           
+ commentstyle=\it\color[RGB]{0,96,96},                % 设置代码注释的格式
+ stringstyle=\ttfamily\color[RGB]{128,0,0},   % 设置字符串格式
+ showstringspaces=false,                              % 不显示字符串中的空格
+ language=c,                                        % 设置语言
+}
+
+
+\begin{document}  
+
+\include{TeX_Files/cover}
+
+\tableofcontents
+
+\let\cleardoublepage\clearpage % 去空白
+
+\mainmatter
+% Part 1 概述
+\include{TeX_Files/description}
+% Part 2 CPU
+\include{TeX_Files/cpu_design}
+% Part 3 SoC设计
+\include{TeX_Files/soc_design}
+% Part 4 系统软件
+\include{TeX_Files/os_software}
+% Part 5 致谢
+\include{TeX_Files/thanks}
+
+\end{document}

@@ -1,0 +1,51 @@
+\chapter{概述}
+
+\section{项目背景}
+
+马家沟河（Ma-River）是第七届”龙芯杯“全国大学生计算机系统能力培养大赛（NSCSCC 2023）的参赛作品。
+
+项目实现了基于MIPS32 Release1指令集的多发射乱序处理器软核——Ma-River CPU，并在此基础上自行构建了SoC，自行设计实现了多个外设控制器，可以运行U-Boot、ucore、Linux，并为其移植或自行实现了大量丰富应用，实现了一个完整的基于FPGA的嵌入式计算机系统。
+
+\section{项目概述}
+
+\subsection{设计模式}
+
+Ma-River的所有硬件设计使用Verilog HDL实现。
+
+在项目前期的结构设计阶段，我们使用C++编写了模拟CPU结构的周期精确模拟器，根据其在benchmark上的性能表现，进行精确的结构调整，使我们以极低代价得到具有优秀IPC的精简结构设计方案。后期直接据此进行RTL实现。
+
+在项目后期的调试阶段，我们自行实现了指令自动生成器，可以根据不同场景生成大量随机指令，通过trace比对尽可能消除CPU核的潜在bug。
+
+\subsection{CPU架构}
+
+Ma-River CPU是六发射超标量乱序处理器，支持128条MIPS32 Release1指令。主流水线11级，取指/提交宽度为2，后端具有用于指令执行的4个整数功能单元和2个浮点功能单元，每周期最多发射执行6条指令。处理器核在整体上分为整数和浮点两个相对独立的部分，二者共享取指/访存/ROB/提交部件。
+
+Ma-River CPU正确实现了CP0、TLB、精确异常等系统支持所需部件，能够支持Linux等操作系统的正常启动运行。
+
+\subsection{SoC设计}
+为了充分利用实验箱上的提供的丰富外设、发挥CPU核的性能，我们基于Vivado Block Design设计了一套功能较完备的SoC。我们通过自行设计的控制器和已有的IP核，能够操作板上的绝大多数功能模块，包括：
+
+- VGA：控制器自行实现；分辨率1024*768，支持字符和图像模式；支持DMA，适配了Framebuffer驱动
+
+- LCD：控制器自行实现；分辨率480*800，支持字符和图像模式；支持DMA，适配了Framebuffer驱动
+
+- LCD触摸：使用AXI IIC IP核实现，并使用自行实现的模块进行硬复位
+
+- PS/2：控制器自行实现；支持PS/2键盘输入
+
+- GPIO：控制器自行实现；支持以中断方式获取按键状态，支持控制LED、数码管
+
+- DRAM：使用Xilinx MIG 7 Series IP核实现
+
+- 串口：使用AXI UART16550 IP核实现
+
+- 以太网：使用AXI Ethernetlite IP核实现
+
+同时，我们通过拓展I/O接口，可对板外SD卡进行读写操作。
+
+
+\subsection{系统软件}
+
+Ma-River使用U-Boot进行引导，可以启动ucore和Linux（最新的6.4版本）操作系统。在Linux上，我们自行实现和移植了VGA Console、LCD、FrameBuffer、键盘等驱动程序，并且还实现了Linux终端的中文输入输出支持。
+
+我们为Linux移植了buildroot，通过网口挂载NFS文件系统，并在此基础上移植了GCC、Python、QEMU等软件，自行编写或移植了LVGL GUI、Gif动画播放器、3D实时渲染器等图形应用。
